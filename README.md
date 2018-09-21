@@ -57,7 +57,9 @@ Clone or download repository.
 2. Create a directory in your webspace to contain your files
 3. reate a file named composer.json. See example below (name is optional and can be changed)
 4. Open command prompt or terminal, cd to directory and input the following command (without quotes)
+    
     i.  Windows: 'composer install'
+    
     ii. Linux/Mac: 'php composer.phar install'
 
 ```json
