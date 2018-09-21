@@ -52,7 +52,25 @@ A lightweight MVC framework for PHP that can be easily deployed and updated with
 Clone or download repository.
 
 #### Composer
-Coming soon, sorry!
+
+1. If you haven't already done so, install Composer
+2. Create a directory in your webspace to contain your files
+3. reate a file named composer.json. See example below (name is optional and can be changed)
+4. Open command prompt or terminal, cd to directory and input the following command (without quotes)
+    i.  Windows: 'composer install'
+    ii. Linux/Mac: 'php composer.phar install'
+
+```json
+{
+    "name" : "element",
+    "require": {
+        "elementphp/element": "dev-master"
+	},
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
+```
+
 <br />
 
 ## Quick Start
