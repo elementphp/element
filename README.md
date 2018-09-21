@@ -18,7 +18,7 @@
   </a>
 
   <a style="margin-left:5px" href="https://img.shields.io/github/issues/paul7337/element.svg?longCache=false&style=flat-square">
-    <img src="https://img.shields.io/github/issues/paul7337/element.svg?longCache=false&style=flat-square"
+    <img src="https://img.shields.io/github/issues/elementphp/element.svg?longCache=false&style=flat-square"
          alt="open issues">
   </a>
 
@@ -52,9 +52,7 @@ A lightweight MVC framework for PHP that can be easily deployed and updated with
 Clone or download repository.
 
 #### Composer
-Install composer
-Create a file named composer.json
-
+Coming soon, sorry!
 <br />
 
 ## Quick Start
