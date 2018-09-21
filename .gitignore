@@ -4,3 +4,4 @@ app/templates_c/
 .vscode/
 .project
 .buildpath
+/vendor/
