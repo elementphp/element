@@ -2,7 +2,7 @@
     "name": "elementphp/element",
     "description": "Lightweight PHP Framework",
     "type": "library",
-    "license": "bsd-3",
+    "license": "BSD-3-Clause",
     "minimum-stability": "dev",
     "require": {}
 }
