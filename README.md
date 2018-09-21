@@ -55,7 +55,7 @@ Clone or download repository.
 
 1. If you haven't already done so, install Composer
 2. Create a directory in your webspace to contain your files
-3. reate a file named composer.json. See example below (name is optional and can be changed)
+3. Create a file named composer.json. See example below (name is optional and can be changed)
 4. Open command prompt or terminal, cd to directory and input the following command (without quotes)
     
     i.  Windows: 'composer install'
