@@ -1,0 +1,6 @@
+app/templates_c/
+.vs/
+.settings/
+.vscode/
+.project
+.buildpath

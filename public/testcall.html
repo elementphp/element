@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<script type="text/javascript" src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+
+<script>
+
+
+$(document).ready(function(){
+	$('#test').click(function(){
+		callapi();
+	});
+});
+
+function callapi(){
+
+	var data = {
+		"id" : "123"
+	};
+	apiRequest("index/index", "POST", successCallBack, data);
+}
+
+function apiRequest(url, type, callback, data) {
+
+	var request = $.ajax({
+		method: type,
+		url: url,
+		data: ( data ) ? data : {}
+	});
+	request.done(function( resp ) {
+		callBack( callback, resp );
+	});
+	request.fail(function( jqXHR, textStatus ) {
+		failCallBack( {"jqx" : jqXHR, "status" : textStatus} );
+	});
+}
+
+function callBack(func, resp) {
+    caller(func, resp);
+}
+
+function caller(func, resp) {
+    func(resp);
+}
+
+
+
+function successCallBack(resp){
+	console.log(resp);
+}
+
+function failCallBack(resp){
+	console.log(resp);
+}
+
+</script>
+
+</head>
+
+<body>
+	<button id="test">TEST</button>
+</body>
+</html>
