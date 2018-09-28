@@ -1,6 +1,6 @@
 <h1 align="center">
   <a href="https://elementphp.com">
-  <img src="https://raw.githubusercontent.com/paul7337/elementhome/master/public/images/logo.png?token=AF4Sw_WmU-hjoTia8ZdJ_DZHrIqZ06CTks5bqpmAwA%3D%3D" alt="element" width="200"></a>
+  <img src="https://elementphp.com/images/logo.png" alt="element" width="200"></a>
   <br>
 </h1>
 
