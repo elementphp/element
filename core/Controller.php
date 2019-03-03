@@ -81,7 +81,12 @@ namespace element\mvc;
 			if(!$this->overrideView)$this->view->display();
 		}
 		else{
-			echo "No action with that name.";
+			if($this->config::get("errors","redirect")) {
+				$location = $this->config::get("errors", "redirect_location");
+				$this->response->redirect($location);
+			} else {
+				echo "No action with that name.";
+			}
 		}
 	}
 	

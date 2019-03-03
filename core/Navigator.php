@@ -66,13 +66,19 @@ class Navigator{
 		
 		try{
 			$class = 'element\mvc\\' . $className . Config::get("defaults", "controller_suffix");
-			$controller = new $class($method,self::$request);
-			$method = $method . Config::get("defaults", "action_suffix");
-			$controller->getFunction($method, $args);
+			if(class_exists($class)) {
+				$controller = new $class($method,self::$request);
+				$method = $method . Config::get("defaults", "action_suffix");
+				$controller->getFunction($method, $args);
+			} else {
+				echo "No controller with that name";
+			}
 		} catch(Exception $ex) {
 			echo $ex->getMessage();
 		}	
 		
 	}
+
+
 
 }
