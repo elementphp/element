@@ -85,8 +85,12 @@ class DB{
 		return $results;
 	}
 
-    /**
-     * STUFF
+   /**
+     * Returns models using raw sql query
+     * 	@return array results from database
+     * 
+     * @param sql  {string} 
+     *
      */
 	public static function searchRaw($sql){
 		$db 		=   self::dba();
@@ -98,7 +102,14 @@ class DB{
 		return $results;
 	}
 
-
+    /**
+     * insert or update
+     * 	@return integer last insert id or null
+     * 
+     * @param className  {string}      
+     * @param returnId  {boolean} 
+     *
+     */
     public function saveModel($className, $returnId=false){
 
         $className = str_replace('element\mvc\\', "", $className);
@@ -118,6 +129,14 @@ class DB{
         return $lastId;
     }
 
+    /**
+     * delete model
+     * 	@return boolean dependant on operation success/failure
+     * 
+     * @param id  {integer}      
+     * @param class  {string} 
+     *
+     */
     public static function deleteModel($id, $class){
 
         try{
@@ -142,11 +161,19 @@ class DB{
             return false;
         }
     }
-    
+
+    /**
+     * @return object abstraction of getModelInfo
+     */
     protected static function returnModelInfo(){
         return self::$modelInfo;
     }
 
+    /**
+     * @return object after running SHOW KEYS
+     * 
+     * Either grabs the info or returns cached version
+     */
     private function getModelInfo($className){
         $className = str_replace("element\mvc\\", "", $className);
         if(!isset(self::$modelInfo[$className])){
@@ -156,7 +183,11 @@ class DB{
         return self::$modelInfo[$className];
     }
 
-
+    /**
+     * @return array 
+     * 
+     * used in saveModel function
+     */
     private function prepareData($className, $db, $returnId=false) {
         
         $info = $this->getModelInfo($className);
