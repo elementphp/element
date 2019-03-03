@@ -71,7 +71,14 @@ class Navigator{
 				$method = $method . Config::get("defaults", "action_suffix");
 				$controller->getFunction($method, $args);
 			} else {
-				echo "No controller with that name";
+				if(Config::get("errors","redirect")) {
+					$location = Config::get("errors", "redirect_location");
+					$r = new Response();
+					$r->redirect($location);
+				} else {
+					echo "No controller with that name";
+				}
+				
 			}
 		} catch(Exception $ex) {
 			echo $ex->getMessage();
