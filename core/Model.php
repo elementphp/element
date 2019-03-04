@@ -45,6 +45,11 @@ class Model extends DB{
         return $results;
     }
 
+    public static function add($addData) {
+        $class = self::_get_class_name();
+        $result = DB::addModel($class, $addData);
+    }
+
 
     public function save($returnId=false){
         try{

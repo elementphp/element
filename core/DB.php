@@ -129,6 +129,7 @@ class DB{
         return $lastId;
     }
 
+
     /**
      * delete model
      * 	@return boolean dependant on operation success/failure
@@ -170,7 +171,7 @@ class DB{
     }
 
     /**
-     * @return object after running SHOW KEYS
+     * @return string gets table primary key after running SHOW KEYS
      * 
      * Either grabs the info or returns cached version
      */
@@ -182,6 +183,85 @@ class DB{
         } 
         return self::$modelInfo[$className];
     }
+
+    
+    /**
+     * TODO
+     */
+    public static function addModel($className, $addData) {
+        
+        $className = str_replace('element\mvc\\', "", $className);
+        
+        $db = new DB();
+        $pdo = self::dba();
+
+        $info = $db->prepareAddData($addData);
+        
+        $pdo->beginTransaction();
+
+        $sql = "INSERT INTO $className (" . implode(",", $info["datafields"] ) . ") VALUES " .
+		implode(',', $info["question_marks"]);
+		$stmt = $pdo->prepare ($sql);
+
+        try {
+			$stmt->execute($info["insert_values"]);
+		}
+		catch (PDOException $e){
+			echo $e->getMessage();
+		}
+		$pdo->commit();
+        
+    }
+
+    private function prepareAddData($addData) {
+        
+        if(gettype($addData)!=="array") {
+            $addData = [ $addData ];
+        }
+
+        $responseObj = [
+            "datafields" => [],
+            "insert_values" => [],
+            "question_marks" => []
+        ];
+        
+        $isObjects = gettype($addData[0]) !== "array";
+
+        if($isObjects) {
+            
+            $responseObj["datafields"] = array_keys( (array)$addData[0] );
+
+            foreach($addData as $d){
+                $d = (array)$d;
+                array_push($responseObj["question_marks"], '('  . $this->placeholders('?', sizeof($d)) . ')' );
+                $responseObj["insert_values"] = array_merge($responseObj["insert_values"], array_values($d));
+            }
+
+        } else {
+
+            $responseObj["datafields"] = array_keys( $addData[0] ); 
+
+            foreach($addData as $d){
+                array_push($responseObj["question_marks"], '('  . $this->placeholders('?', sizeof($d)) . ')' );                
+                $responseObj["insert_values"] = array_merge($responseObj["insert_values"], array_values($d));
+            }
+
+        }
+        return $responseObj;
+    }
+    
+    private function placeholders($text, $count=0, $separator=","){
+		
+		$result = array();
+		
+		if($count > 0){
+			for ($x=0; $x<$count; $x++){
+				$result[] = $text;
+			}
+		}
+		return implode($separator, $result);
+	}
+
 
     /**
      * @return array 
@@ -221,6 +301,10 @@ class DB{
         $values   = "(" . join($vals,",") . ")";
         $dupes   = rtrim($dupes,",");
 
+        /**
+         * TODO - Don't think the "id" section of array is ever used
+         * Not removing immediately, need to test
+         */
         return [
             "id" => $primaryKey,
             "cols" => $cols,
