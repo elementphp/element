@@ -215,7 +215,7 @@ class DB{
 
     private function prepareAddData($addData) {
         
-        if(gettype($addData)!=="array") {
+        if(gettype($addData)!=="array" || ( gettype($addData)==="array" && !isset($addData[0]))) {
             $addData = [ $addData ];
         }
 
