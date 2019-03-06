@@ -195,7 +195,9 @@ class DB{
         $db = new DB();
         $pdo = self::dba();
 
-        $info = $db->prepareAddData($addData);
+        $primaryKey = $db->getModelInfo($className);
+
+        $info = $db->prepareAddData($addData, $primaryKey);
         
         $pdo->beginTransaction();
 
@@ -213,7 +215,7 @@ class DB{
         
     }
 
-    private function prepareAddData($addData) {
+    private function prepareAddData($addData, $primaryKey) {
         
         if(gettype($addData)!=="array" || ( gettype($addData)==="array" && !isset($addData[0]))) {
             $addData = [ $addData ];
@@ -229,9 +231,21 @@ class DB{
 
         if($isObjects) {
             
+
             $responseObj["datafields"] = array_keys( (array)$addData[0] );
 
+            $keypos = 0;
+            $keylen = count($responseObj["datafields"]);
+            for($i = 0; $i < $keylen; $i++) {
+                if( $responseObj["datafields"][$i]===$primaryKey ) {
+                    $keypos = $i;
+                    break;
+                }
+            }
+            unset($responseObj["datafields"][$keypos]);
+
             foreach($addData as $d){
+                unset($d->$primaryKey);
                 $d = (array)$d;
                 array_push($responseObj["question_marks"], '('  . $this->placeholders('?', sizeof($d)) . ')' );
                 $responseObj["insert_values"] = array_merge($responseObj["insert_values"], array_values($d));
