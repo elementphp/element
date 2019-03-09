@@ -1,4 +1,21 @@
 1.0 
 release
 
---------------------
+------------------------------------------------------------
+
+1.1.1
+
+- bugfix: 
+  not all 404 errors were caught 
+  i.e. host/root/th1sisa404.html 
+
+- improvement: 
+  new method for models: add
+
+- improvement:
+  new method for models: upsert
+
+- improvement:
+  better code documentation
+
+  ------------------------------------------------------------
