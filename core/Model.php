@@ -48,6 +48,13 @@ class Model extends DB{
     public static function add($addData) {
         $class = self::_get_class_name();
         $result = DB::addModel($class, $addData);
+        return $result;
+    }
+
+    public static function upsert($updateData) {
+        $class = self::_get_class_name();
+        $result = DB::upsertModel($class, $updateData);
+        return $result;
     }
 
 

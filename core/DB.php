@@ -85,13 +85,16 @@ class DB{
 		return $results;
 	}
 
-   /**
+
+	/**
+	 * searchRaw
+	 *
+	 * @param  string $sql
+	 *
      * Returns models using raw sql query
-     * 	@return array results from database
      * 
-     * @param sql  {string} 
-     *
-     */
+	 * @return array
+	 */
 	public static function searchRaw($sql){
 		$db 		=   self::dba();
 		$query  	= 	$db->query($sql);
@@ -100,15 +103,21 @@ class DB{
         $query = null;
         $db = null;
 		return $results;
-	}
+    }
+    
+
+
 
     /**
-     * insert or update
-     * 	@return integer last insert id or null
-     * 
-     * @param className  {string}      
-     * @param returnId  {boolean} 
+     * saveModel
      *
+     * @param  string $className
+     * @param  boolean $returnId
+     *
+     * insert or update
+     * 
+     * @return mixed 
+     * (Either last insert id or null)
      */
     public function saveModel($className, $returnId=false){
 
@@ -131,12 +140,12 @@ class DB{
 
 
     /**
-     * delete model
-     * 	@return boolean dependant on operation success/failure
-     * 
-     * @param id  {integer}      
-     * @param class  {string} 
+     * deleteModel
      *
+     * @param  string $id
+     * @param  string $class
+     *
+     * @return boolean
      */
     public static function deleteModel($id, $class){
 
@@ -163,17 +172,28 @@ class DB{
         }
     }
 
+ 
     /**
-     * @return object abstraction of getModelInfo
+     * returnModelInfo
+     * 
+     * abstraction of getModelInfo
+     * 
+     * @return string
      */
     protected static function returnModelInfo(){
         return self::$modelInfo;
     }
 
+
     /**
-     * @return string gets table primary key after running SHOW KEYS
+     * getModelInfo
+     *
+     * @param string $className
      * 
+     * Gets table primary key after running SHOW KEYS
      * Either grabs the info or returns cached version
+     *
+     * @return void
      */
     private function getModelInfo($className){
         $className = str_replace("element\mvc\\", "", $className);
@@ -186,10 +206,132 @@ class DB{
 
     
     /**
-     * TODO
+     * upsertModel
+     *
+     * @param  string $className
+     * @param  mixed $upsertData
+     *
+     * @return boolean $isOk 
+     */
+    public static function upsertModel($className, $upsertData) {
+        
+        $isOk = false;
+
+        $className = str_replace('element\mvc\\', "", $className);
+        
+        $db = new DB();
+        $pdo = self::dba();
+
+        $primaryKey = $db->getModelInfo($className);
+        
+        $info = $db->prepareUpsertData($upsertData, $primaryKey);
+        
+        $pdo->beginTransaction();
+
+        $sql = "INSERT INTO $className (" . implode(",", $info["datafields"] ) . ") VALUES " . implode(',', $info["question_marks"]) . " ON DUPLICATE KEY UPDATE ";
+        
+        foreach($info["datafields"] as $key) {
+            $sql .= "$key = VALUES($key),"; 
+        }
+        $sql = rtrim($sql,",");
+
+		$stmt = $pdo->prepare ($sql);
+
+        try {
+            $stmt->execute($info["upsert_values"]);
+            $pdo->commit();
+            $isOk = true;
+		}
+		catch (PDOException $e){
+            $pdo->rollBack();
+        }
+        $stmt = null;
+        $pdo = null;
+        return $isOk;
+    }
+
+    /**
+     * prepareUpsertData
+     *
+     * @param  mixed $upsertData
+     * @param  string $primaryKey
+     *
+     * @return array $responseObj
+     */
+    private function prepareUpsertData($upsertData, $primaryKey) {
+        
+        if(gettype($upsertData)!=="array" || ( gettype($upsertData)==="array" && !isset($upsertData[0]))) {
+            $upsertData = [ $upsertData ];
+        }
+
+        $responseObj = [
+            "datafields" => [],
+            "upsert_values" => [],
+            "question_marks" => []
+        ];
+
+        $isObjects = gettype($upsertData[0]) !== "array";
+
+        $primer = (array)$upsertData[0];
+        $hasPrimary = array_key_exists($primaryKey, $primer);
+
+        $responseObj["datafields"] = array_keys( $primer );
+
+        if($hasPrimary) {
+
+            if($isObjects) {
+            
+                foreach($upsertData as $d){
+                    $d = (array)$d;
+                    array_push($responseObj["question_marks"], '('  . $this->placeholders('?', sizeof($d)) . ')' );
+                    $responseObj["upsert_values"] = array_merge($responseObj["upsert_values"], array_values($d));
+                }
+    
+            } else {
+    
+                foreach($upsertData as $d){
+                    array_push($responseObj["question_marks"], '('  . $this->placeholders('?', sizeof($d)) . ')' );                
+                    $responseObj["upsert_values"] = array_merge($responseObj["upsert_values"], array_values($d));
+                }
+    
+            }
+
+        } else {
+            if($isObjects) {
+                
+                foreach($upsertData as $d){
+                    $d = (array)$d;
+                    $d = array($primaryKey => null) + $d;
+                    array_push($responseObj["question_marks"], '('  . $this->placeholders('?', sizeof($d)) . ')' );
+                    $responseObj["upsert_values"] = array_merge($responseObj["upsert_values"], array_values($d));
+                }
+
+            } else {
+
+                foreach($upsertData as $d){
+                    $d = array($primaryKey => null) + $d;
+                    array_push($responseObj["question_marks"], '('  . $this->placeholders('?', sizeof($d)) . ')' );                
+                    $responseObj["upsert_values"] = array_merge($responseObj["upsert_values"], array_values($d));
+                }
+
+            }
+        }
+        return $responseObj;
+    }
+    
+
+    /**
+     * addModel
+     *
+     * @param  string $className
+     * @param  mixed $addData
+     *
+     * @return boolean $isOk
      */
     public static function addModel($className, $addData) {
         
+        $isOk = false;
+
         $className = str_replace('element\mvc\\', "", $className);
         
         $db = new DB();
@@ -206,15 +348,28 @@ class DB{
 		$stmt = $pdo->prepare ($sql);
 
         try {
-			$stmt->execute($info["insert_values"]);
+            $stmt->execute($info["insert_values"]);
+            $pdo->commit();
+            $isOk = true;
 		}
 		catch (PDOException $e){
-			echo $e->getMessage();
-		}
-		$pdo->commit();
-        
+            $pdo->rollBack();
+        }
+        $stmt = null;
+        $pdo = null;
+        return $isOk;
     }
 
+
+
+    /**
+     * prepareAddData
+     *
+     * @param  mixed $addData
+     * @param  string $primaryKey
+     *
+     * @return array
+     */
     private function prepareAddData($addData, $primaryKey) {
         
         if(gettype($addData)!=="array" || ( gettype($addData)==="array" && !isset($addData[0]))) {
@@ -231,7 +386,6 @@ class DB{
 
         if($isObjects) {
             
-
             $responseObj["datafields"] = array_keys( (array)$addData[0] );
 
             $keypos = 0;
@@ -264,6 +418,17 @@ class DB{
         return $responseObj;
     }
     
+    /**
+     * placeholders
+     *
+     * @param  string $text
+     * @param  integer $count
+     * @param  string $separator
+     *
+     * helper for prepareAddData and prepareUpsertData
+     * 
+     * @return void
+     */
     private function placeholders($text, $count=0, $separator=","){
 		
 		$result = array();
@@ -277,10 +442,15 @@ class DB{
 	}
 
 
+
     /**
-     * @return array 
-     * 
-     * used in saveModel function
+     * prepareData
+     *
+     * @param  string $className
+     * @param  object $db
+     * @param  boolean $returnId
+     *
+     * @return void
      */
     private function prepareData($className, $db, $returnId=false) {
         
