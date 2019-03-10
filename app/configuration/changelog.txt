@@ -19,3 +19,9 @@ release
   better code documentation
 
   ------------------------------------------------------------
+
+  1.1.2
+
+  - bugfix
+    redirect handling in Controller.php throws error.
+    reverting to investigate
