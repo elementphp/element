@@ -12,9 +12,9 @@
     <img src="https://img.shields.io/badge/php-7%2B-green.svg?longCache=true&style=flat-square"
          alt="php version 7 plus">
   </a>
-  <a style="margin-left:5px" href="https://img.shields.io/badge/stable-1.0.0-green.svg?longCache=true&style=flat-square">
-    <img src="https://img.shields.io/badge/stable-1.0.0-green.svg?longCache=true&style=flat-square"
-         alt="stable version 1.0.0">
+  <a style="margin-left:5px" href="https://img.shields.io/badge/stable-1.2.2-green.svg?longCache=true&style=flat-square">
+    <img src="https://img.shields.io/badge/stable-1.2.2-green.svg?longCache=true&style=flat-square"
+         alt="stable version 1.2.2">
   </a>
 
   <a style="margin-left:5px" href="https://img.shields.io/github/issues/paul7337/element.svg?longCache=false&style=flat-square">
