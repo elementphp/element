@@ -18,4 +18,17 @@ release
 - improvement:
   better code documentation
 
-  ------------------------------------------------------------
+------------------------------------------------------------
+
+1.1.2
+
+- bugfix:
+  emergency revert additional 404 handling in Controller.php
+
+------------------------------------------------------------
+
+1.2.2
+
+- improvement:
+  add getConfig method to controller to replace the $this->config:: -methods
+

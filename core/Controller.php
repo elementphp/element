@@ -50,6 +50,11 @@ namespace element\mvc;
 		$this->beforeLoad();
 	}
 
+	protected function getConfig() {
+		$conf = \element\core\Config::Instance();
+		return $conf->_config;
+	}
+
 	protected function beforeLoad(){}
 
 	/**
@@ -81,12 +86,13 @@ namespace element\mvc;
 			if(!$this->overrideView)$this->view->display();
 		}
 		else{
-			// if($this->config::get("errors","redirect")) {
-			// 	$location = $this->config::get("errors", "redirect_location");
-			// 	$this->response->redirect($location);
-			// } else {
+			$conf = $this->getConfig();
+			if($conf["errors"]["redirect"]) {
+				$location = $conf["errors"]["redirect_location"];
+				$this->response->redirect($location);
+			} else {
 				echo "No action with that name.";
-			// }
+			}
 		}
 	}
 	
