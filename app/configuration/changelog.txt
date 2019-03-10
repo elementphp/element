@@ -18,10 +18,18 @@ release
 - improvement:
   better code documentation
 
-  ------------------------------------------------------------
+------------------------------------------------------------
 
-  1.1.2
+1.1.2
 
-  - bugfix
-    redirect handling in Controller.php throws error.
-    reverting to investigate
+- bugfix
+  redirect handling in Controller.php throws error.
+  reverting to investigate
+
+------------------------------------------------------------
+
+1.2.2
+
+- improvement:
+  add getConfig method to controller to replace the $this->config:: -methods
+
